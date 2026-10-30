@@ -1,0 +1,10 @@
+torch>=2.1
+numpy
+pyyaml
+sentencepiece
+sacrebleu>=2.4
+sacremoses
+scikit-learn
+nltk            # METEOR (needs the wordnet corpus: python -m nltk.downloader wordnet omw-1.4)
+pytest
+# optional, only for COMET:  unbabel-comet
