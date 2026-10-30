@@ -1,0 +1,43 @@
+# Hyperparameters mirror Table 1 of the manuscript. Items marked (CHECK) are not fully pinned
+# down by the manuscript text and must match what the reported runs used.
+seed: 13
+data:
+  dir: data/processed          # produced by scripts/prepare_data.py
+  max_len: 128                 # subword tokens
+  vocab_size: 30000            # shared BPE vocabulary
+model:
+  d_model: 512
+  d_ff: 1024
+  heads: 8
+  enc_layers: 3
+  dec_layers: 3
+  dropout: 0.1                 # (CHECK)
+  chunk_tokens: 2              # 0.5 s of speech ~ 2 BPE tokens (manuscript estimate, CHECK)
+train:
+  optimizer: adam
+  lr: 3.0e-4
+  warmup_steps: 4000           # (CHECK)
+  batch_tokens: 4096
+  label_smoothing: 0.1
+  epochs: 30                   # (CHECK) early stopping on validation BLEU
+  patience: 5
+  fp16: false                  # set true on GPU (the manuscript reports mixed precision on a V100)
+  alpha: 0.70                  # share of complete sentence pairs
+  beta: 0.20                   # classification loss weight
+  lambda: 0.05                 # latency loss weight
+  # ablation switches (Sec. 5.3): turn one off for leave-one-out
+  chunk_encoder: true
+  prefix_aug: true
+  joint_cls: true
+  latency_loss: true
+adapt:                         # domain-adaptation stage (Sec. 2.4)
+  epochs: 3
+  lr: 1.0e-4
+decode:
+  tau: 3                       # forced-WRITE lag bound
+  k: 3                         # wait-k
+  chunk: 2
+  src_ms: 250.0                # simulated source arrival (AL_CA)
+  beam: 1                      # greedy. NOTE: Table 1 of the manuscript says beam 4 -> reconcile!
+bootstrap:
+  n_resamples: 10000
